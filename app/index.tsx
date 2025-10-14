@@ -1,6 +1,6 @@
 import { useTheme } from "@/src/context/themeContext";
 import { Theme } from "@/src/theme/colors";
-import { Font, fonts } from "@/src/theme/fonts";
+import { Font, fontSize, fonts } from "@/src/theme/fonts";
 import { useFonts } from "expo-font";
 import { useMemo } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
@@ -57,7 +57,7 @@ export const createStyles = (theme: Theme) =>
     },
     title: {
       color: theme.text,
-      fontSize: 22,
+      fontSize: fontSize.size30,
       fontFamily: fonts.fontBold,
     },
     buttonCon: {
