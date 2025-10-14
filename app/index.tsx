@@ -1,9 +1,15 @@
+import { useTheme } from "@/src/context/themeContext";
+import { Theme } from "@/src/theme/colors";
 import { Font, fonts } from "@/src/theme/fonts";
 import { useFonts } from "expo-font";
-import { Text, View } from "react-native";
+import { useMemo } from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
 import "../global.css";
 
 export default function Index() {
+  const { colors, setTheme, theme } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   const [fontsLoaded] = useFonts({
     fontRegular: Font.fontRegular,
     fontMedium: Font.fontMedium,
@@ -17,45 +23,52 @@ export default function Index() {
   }
 
   return (
-    <View className="flex-1 items-center justify-center bg-gray-400 p-5 gap-16">
-     
-     <View className="gap-3">
-     <Text style={{ fontSize: 18 }} className="font-fontRegular">
-        Edit app/index.tsx to edit this screen.
-      </Text>
-      <Text style={{ fontSize: 18 }} className="font-fontMedium">
-        Edit app/index.tsx to edit this screen.
-      </Text>
-      <Text style={{ fontSize: 18 }} className="font-fontSemibold">
-        Edit app/index.tsx to edit this screen.
-      </Text>
-      <Text style={{ fontSize: 18 }} className="font-fontBold">
-        Edit app/index.tsx to edit this screen.
-      </Text>
-      <Text style={{ fontSize: 18 }} className="font-fontExtraBold">
-        Edit app/index.tsx to edit this screen.
-      </Text>
-     </View>
-   
+    <View style={styles.container}>
+      <Text style={styles.title}>Current Theme: {theme}</Text>
 
-
-     <View className="gap-3">
-      <Text style={{ fontSize: 18, fontFamily: fonts.fontRegular, }}>
-        Edit app/index.tsx to edit this screen.
-      </Text>
-      <Text style={{ fontSize: 18, fontFamily: fonts.fontMedium, }}>
-        Edit app/index.tsx to edit this screen.
-      </Text>
-      <Text style={{ fontSize: 18, fontFamily: fonts.fontSemibold, }}>
-        Edit app/index.tsx to edit this screen.
-      </Text>
-      <Text style={{ fontSize: 18, fontFamily: fonts.fontBold, }}>
-        Edit app/index.tsx to edit this screen.
-      </Text>
-      <Text style={{ fontSize: 18, fontFamily: fonts.fontExtraBold, }}>
-        Edit app/index.tsx to edit this screen.
-      </Text>
+      <View style={styles.buttonCon}>
+        <Button
+          title="Light"
+          onPress={() => setTheme("light")}
+          color={colors.primary}
+        />
+        <Button
+          title="Dark"
+          onPress={() => setTheme("dark")}
+          color={colors.primary}
+        />
+        <Button
+          title="Blue"
+          onPress={() => setTheme("blue")}
+          color={colors.primary}
+        />
       </View>
     </View>
   );
 }
+
+export const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.background,
+    },
+    title: {
+      color: theme.text,
+      fontSize: 22,
+      fontFamily: fonts.fontBold,
+    },
+    buttonCon: {
+      marginTop: 20,
+      gap: 5,
+    },
+    button: {
+      marginTop: 20,
+      backgroundColor: theme.primary,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 10,
+    },
+  });
