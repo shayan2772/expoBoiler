@@ -1,5 +1,5 @@
 import { useTheme } from "@/src/context/themeContext";
-import { Theme } from "@/src/theme/colors";
+import { Theme, ThemeName } from "@/src/theme/colors";
 import { Font, fontSize, fonts } from "@/src/theme/fonts";
 import { useFonts } from "expo-font";
 import { useMemo } from "react";
@@ -7,7 +7,7 @@ import { Button, StyleSheet, Text, View } from "react-native";
 import "../global.css";
 
 export default function Index() {
-  const { colors, setTheme, theme } = useTheme();
+  const { colors, setTheme,setThemeType, theme,themeType } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
 
   const [fontsLoaded] = useFonts({
@@ -22,24 +22,36 @@ export default function Index() {
     return null; // show loader until fonts loaded
   }
 
+
+  const onSetTheme=(val:ThemeName)=>{
+    setThemeType("default")
+    setTheme(val);
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Current Theme: {theme}</Text>
+      <Text style={styles.title}>Current Type: {themeType}</Text>
 
       <View style={styles.buttonCon}>
         <Button
           title="Light"
-          onPress={() => setTheme("light")}
+          onPress={() =>onSetTheme("light")}
           color={colors.primary}
         />
         <Button
           title="Dark"
-          onPress={() => setTheme("dark")}
+          onPress={() => onSetTheme("dark")}
           color={colors.primary}
         />
         <Button
           title="Blue"
-          onPress={() => setTheme("blue")}
+          onPress={() => onSetTheme("blue")}
+          color={colors.primary}
+        />
+        <Button
+          title="System"
+          onPress={() => setThemeType("system")}
           color={colors.primary}
         />
       </View>
@@ -57,7 +69,7 @@ export const createStyles = (theme: Theme) =>
     },
     title: {
       color: theme.text,
-      fontSize: fontSize.size30,
+      fontSize: fontSize.size22,
       fontFamily: fonts.fontBold,
     },
     buttonCon: {
