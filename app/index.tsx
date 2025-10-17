@@ -1,93 +1,72 @@
+import Header from "@/src/components/header/header";
 import { getLangLabel } from "@/src/constant/functions";
-import { useTheme } from "@/src/context/themeContext";
-import { Storage } from "@/src/services/storage";
-import { Theme, ThemeName } from "@/src/theme/colors";
-import { Font, fontSize, fonts } from "@/src/theme/fonts";
-import { useFonts } from "expo-font";
-import { useMemo } from "react";
+import { IMAGES } from "@/src/constant/images";
+import { useTheme } from "@/src/hooks/hooks";
+import { Theme } from "@/src/theme/colors";
+import { fontSize, fonts } from "@/src/theme/fonts";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, StyleSheet, Text, View } from "react-native";
+import {
+  Animated,
+  Easing,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import "../global.css";
 
 export default function Index() {
-  const { colors, setTheme, setThemeType, theme, themeType } = useTheme();
+  const { colors, theme ,themeType} = useTheme();
   const { t, i18n } = useTranslation();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const rotateYAnim = useRef(new Animated.Value(0)).current;
 
-  const [fontsLoaded] = useFonts({
-    fontRegular: Font.fontRegular,
-    fontMedium: Font.fontMedium,
-    fontSemibold: Font.fontSemibold,
-    fontBold: Font.fontBold,
-    fontExtraBold: Font.fontExtraBold,
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(rotateYAnim, {
+        toValue: 1,
+        duration: 6500,
+        easing: Easing.linear,
+        useNativeDriver: Platform.OS !== "web",
+      })
+    ).start();
+  }, [rotateYAnim]);
+
+  const rotateY = rotateYAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
   });
-  if (!fontsLoaded) {
-    return null; // show loader until fonts loaded
-  }
-
-  const onSetTheme = (val: ThemeName) => {
-    setThemeType("default");
-    setTheme(val);
-  };
-
-  const changeLang = async (lang: string) => {
-    await i18n.changeLanguage(lang);
-    await Storage.setItem("language", lang);
-  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>
-        {t("current")} {t("theme")}: {theme}
-      </Text>
-      <Text style={styles.title}>
-        {t("current")} {t("type")}: {themeType}
-      </Text>
-      <Text style={styles.title}>
-        {t("current")} {t("language")}: {getLangLabel(i18n.language)}
-      </Text>
-
-      <View style={styles.buttonCon}>
-        <Button
-          title="Light"
-          onPress={() => onSetTheme("light")}
-          color={colors.primary}
-        />
-        <Button
-          title="Dark"
-          onPress={() => onSetTheme("dark")}
-          color={colors.primary}
-        />
-        <Button
-          title="Blue"
-          onPress={() => onSetTheme("blue")}
-          color={colors.primary}
-        />
-        <Button
-          title="System"
-          onPress={() => setThemeType("system")}
-          color={colors.primary}
-        />
+    <SafeAreaView style={styles.container}>
+      <Header />
+      <Animated.Image
+        source={IMAGES.x2Logo}
+        resizeMode="contain"
+        style={[
+          styles.logo,
+          {
+            transform: [
+              { perspective: 1000 }, // 👈 adds 3D depth
+              { rotateY },
+            ],
+          },
+        ]}
+      />
+      <View style={styles.main}>
+        <Text style={styles.title}>
+          {t("current")} {t("theme")}: {theme}
+        </Text>
+        <Text style={styles.title}>
+          {t("current")} {t("type")}: {themeType}
+        </Text>
+        <Text style={styles.title}>
+          {t("current")} {t("language")}: {getLangLabel(i18n.language)}
+        </Text>
       </View>
-
-      <View style={styles.buttonCon}>
-        <Button
-          title="English"
-          onPress={() => changeLang("en")}
-          color={colors.primary}
-        />
-        <Button
-          title="اردو"
-          onPress={() => changeLang("ur")}
-          color={colors.primary}
-        />
-        <Button
-          title="Français"
-          onPress={() => changeLang("fr")}
-          color={colors.primary}
-        />
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -95,23 +74,23 @@ export const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
       backgroundColor: theme.background,
+    },
+    logo: {
+      width: 180,
+      height: 180,
+      position: "absolute",
+      top: 10,
+    },
+    main: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 10,
     },
     title: {
       color: theme.text,
       fontSize: fontSize.size22,
       fontFamily: fonts.fontBold,
-    },
-    buttonCon: {
-      marginTop: 20,
-      gap: 5,
-    },
-    button: {
-      backgroundColor: theme.primary,
-      paddingVertical: 10,
-      paddingHorizontal: 25,
-      borderRadius: 12,
     },
   });

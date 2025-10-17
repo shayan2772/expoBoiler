@@ -1,32 +1,4 @@
-import * as Device from "expo-device";
-import { Dimensions, Platform } from "react-native";
-
-const { width, height } = Dimensions.get("window");
-
-// Reference sizes (based on ~5" screen like Pixel 5 / iPhone 11)
-const guidelineBaseWidth = 360;
-const guidelineBaseHeight = 800 + 40;
-
-// Scale helperss
-const scale = (size: number) => (width / guidelineBaseWidth) * size;
-const vs = (size: number) => (height / guidelineBaseHeight) * size;
-
-// ✅ Responsive font scale
-const fontScale = (size: number) => {
-  const scaleFactor = width / guidelineBaseWidth;
-
-  const isTablet = Device.deviceType === Device.DeviceType.TABLET;
-  let adjustedFactor;
-
-  if (isTablet) {
-    adjustedFactor = 0.55; // smaller fonts on tablets
-  } else {
-    adjustedFactor = Platform.OS === "ios" ? 0.95 : 0.88;
-  }
-
-  const scaled = size * scaleFactor * adjustedFactor;
-  return Math.round(scaled);
-};
+import { fontScale } from "../constant/functions";
 
 export const fonts = {
   fontRegular: "fontRegular",
@@ -43,8 +15,8 @@ export const Font = {
   fontBold: require("@/assets/fonts/SUSEMono-Bold.ttf"),
   fontExtraBold: require("@/assets/fonts/SUSEMono-ExtraBold.ttf"),
 };
- 
- 
+
+
 export const fontSize = {
   size10: fontScale(10),
   size11: fontScale(11),
@@ -67,14 +39,9 @@ export const fontSize = {
   size28: fontScale(28),
   size29: fontScale(29),
   size30: fontScale(30),
-  size31: fontScale(31),
   size32: fontScale(32),
-  size33: fontScale(33),
   size34: fontScale(34),
-  size35: fontScale(35),
   size36: fontScale(36),
-  size37: fontScale(37),
   size38: fontScale(38),
-  size39: fontScale(39),
   size40: fontScale(40),
 };
