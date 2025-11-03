@@ -9,8 +9,10 @@ import { ThemeName } from "@/src/theme/colors";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
+import { Text, View, Platform } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
+import { I18nManager } from "react-native";
+import * as Updates from "expo-updates";
 import { createStyles } from "./styles";
 
 export default function Header() {
@@ -43,6 +45,45 @@ export default function Header() {
   const changeLang = async (val: string) => {
     await i18n.changeLanguage(val);
     dispatch(setLanguage(val));
+    
+    // Handle RTL for native platforms
+    if (Platform.OS !== "web") {
+      const needsRTL = val === "ur";
+      const currentIsRTL = I18nManager.isRTL;
+      
+      // Only reload if RTL direction needs to change
+      if (needsRTL !== currentIsRTL) {
+        if (needsRTL) {
+          I18nManager.allowRTL(true);
+          I18nManager.forceRTL(true);
+        } else {
+          I18nManager.allowRTL(false);
+          I18nManager.forceRTL(false);
+        }
+        
+        // Reload app to apply RTL changes
+        // This is necessary because I18nManager changes only take effect after app restart
+        try {
+        setTimeout(async () => {
+          await Updates.reloadAsync();
+        }, 50);
+        } catch (error) {
+          // If reload fails (e.g., in Expo Go), the change will apply on next app restart
+          console.warn("Could not reload app. RTL change will apply on next restart:", error);
+        }
+      }
+    } else {
+      // Handle RTL for web
+      if (typeof document !== "undefined") {
+        if (val === "ur") {
+          document.documentElement.dir = "rtl";
+          document.documentElement.setAttribute("lang", "ur");
+        } else {
+          document.documentElement.dir = "ltr";
+          document.documentElement.setAttribute("lang", val);
+        }
+      }
+    }
   };
 
   const onSetTheme = async (val: ThemeName) => {
