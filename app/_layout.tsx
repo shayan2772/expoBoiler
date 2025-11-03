@@ -55,7 +55,6 @@ export default function RootLayout() {
         >
           <ThemedStatusBar />
           <Slot />
-          {/* <Stack screenOptions={{ headerShown: false }} /> */}
         </PersistGate>
       </Provider>
     </I18nextProvider>

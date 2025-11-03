@@ -1,13 +1,13 @@
-import { Storage } from "@/src/services/storage"; // your file
+import { SecureStorageService } from "@/src/services/storage";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 import generalReducer from "./slices/generalSlice";
 
 // ✅ Custom SecureStore adapter for redux-persist
 const SecureStorageAdapter = {
-  setItem: (key: string, value: string) => Storage.setItem(key, value),
-  getItem: (key: string) => Storage.getItem(key),
-  removeItem: (key: string) => Storage.removeItem(key),
+  setItem: (key: string, value: string) => SecureStorageService.setItem(key, value),
+  getItem: (key: string) => SecureStorageService.getItem(key),
+  removeItem: (key: string) => SecureStorageService.removeItem(key),
 };
 
 // ✅ persist config

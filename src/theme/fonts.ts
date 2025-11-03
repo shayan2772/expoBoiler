@@ -16,8 +16,8 @@ export const Font = {
   fontExtraBold: require("@/assets/fonts/SUSEMono-ExtraBold.ttf"),
 };
 
-
 export const fontSize = {
+  size1: fontScale(1),
   size10: fontScale(10),
   size11: fontScale(11),
   size12: fontScale(12),

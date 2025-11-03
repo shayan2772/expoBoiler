@@ -1,8 +1,38 @@
-import * as Device from "expo-device";
-import { Dimensions, Platform } from "react-native";
+import { Dimensions, PixelRatio, Platform } from "react-native";
+// Get device dimensions
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+// Base dimensions (iPhone 14 Pro as reference)
+const BASE_WIDTH = 393;
+const BASE_HEIGHT = 852;
 
-const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
-const guidelineBaseWidth = 375;
+/**
+ * Responsive font size calculator
+ * Scales font sizes based on screen width for consistent appearance across devices
+ */
+export const fontScale = (size: number): number => {
+  // For web, use different scaling based on window width
+  if (Platform.OS === "web") {
+    // Small screens (mobile-like on web)
+    if (SCREEN_WIDTH <= 640) {
+      return Math.round((SCREEN_WIDTH / BASE_WIDTH) * size);
+    }
+    // Medium screens (tablets)
+    else if (SCREEN_WIDTH <= 1024) {
+      return Math.round(size * 1.1); // Slightly larger
+    }
+    // Large screens (desktop)
+    else {
+      return Math.round(size * 1.15); // Even larger for desktop
+    }
+  }
+
+  // For mobile, scale based on screen width
+  const scaleRatio = SCREEN_WIDTH / BASE_WIDTH;
+  const newSize = size * scaleRatio;
+
+  // Round to nearest pixel
+  return Math.round(PixelRatio.roundToNearestPixel(newSize));
+};
 
 export const getLangLabel = (code: string) => {
   switch (code) {
@@ -13,44 +43,4 @@ export const getLangLabel = (code: string) => {
     default:
       return "English";
   }
-};
-
-export const fontScale = (size: number): number => {
-  const width = windowWidth;
-  const height = windowHeight;
-
-  // Screen dimension based scaling
-  const scaleFactor = Math.min(width / guidelineBaseWidth, 1.3);
-
-  // Device type detection
-  const isTablet =
-    Device.deviceType === Device.DeviceType.TABLET ||
-    width > 900 ||
-    (width > height && width > 700); // landscape tablet detection
-
-  const isSmallDevice = width < 350;
-  const isLargeTablet = width > 1100;
-
-  // Platform and device specific adjustments
-  let adjustedFactor;
-
-  if (isTablet) {
-    if (isLargeTablet) {
-      adjustedFactor = 0.7; // Large tablets - slightly larger fonts
-    } else {
-      adjustedFactor = 0.65; // Regular tablets
-    }
-  } else if (isSmallDevice) {
-    adjustedFactor = Platform.OS === "ios" ? 0.85 : 0.8; // Small phones
-  } else {
-    adjustedFactor = Platform.OS === "ios" ? 0.95 : 0.9; // Regular phones
-  }
-
-  const scaled = size * scaleFactor * adjustedFactor;
-
-  // Minimum font size ensure readability
-  const minSize = Math.max(size * 0.8, 8);
-  const finalSize = Math.max(Math.round(scaled), minSize);
-
-  return finalSize;
 };
