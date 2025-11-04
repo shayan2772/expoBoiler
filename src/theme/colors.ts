@@ -6,6 +6,7 @@ export const themes = {
     secondary: "#F3F4F6",
     borderLine: "black",
     icon: "black",
+    selectedDropDownText:"#FFFFFF"
   },
   dark: {
     background: "#000000",
@@ -14,6 +15,7 @@ export const themes = {
     secondary: "#1E1E1E",
     borderLine: "white",
     icon: "white",
+     selectedDropDownText:"#FFFFFF"
   },
   blue: {
     background: "#001F3F",
@@ -22,6 +24,7 @@ export const themes = {
     secondary: "#003366",
     borderLine: "white",
     icon: "white",
+     selectedDropDownText:"#FFFFFF"
   },
 };
 

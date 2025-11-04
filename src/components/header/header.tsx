@@ -1,4 +1,5 @@
 import { langData, themeData } from "@/src/constant/data";
+import { setupRTL } from "@/src/constant/functions";
 import { useAppDispatch, useTheme } from "@/src/hooks/hooks";
 import {
   setLanguage,
@@ -9,9 +10,8 @@ import { ThemeName } from "@/src/theme/colors";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View, Platform } from "react-native";
+import { Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { I18nManager } from "react-native";
 import * as Updates from "expo-updates";
 import { createStyles } from "./styles";
 
@@ -21,23 +21,34 @@ export default function Header() {
   const { i18n } = useTranslation();
   const styles = useMemo(() => createStyles(colors), [colors]);
 
-  // console.log("theme : ", theme);
-  // console.log("language : ", i18n.language);
-
-  const renderItem2 = (item) => {
+  const renderItem2 = (item: any) => {
+    const isSel = item.value === theme;
     return (
-      <View style={[styles.item, item.value === theme && styles.selItem]}>
-        <Text style={styles.itemText}>{item.label}</Text>
+      <View style={[styles.item, isSel && styles.selItem]}>
+        <Text
+          style={[
+            styles.itemText,
+            { color: isSel ? colors.selectedDropDownText : colors.text },
+          ]}
+        >
+          {item.label}
+        </Text>
       </View>
     );
   };
 
-  const renderItem = (item) => {
+  const renderItem = (item: any) => {
+    const isSel = item.value === i18n.language;
     return (
-      <View
-        style={[styles.item, item.value === i18n.language && styles.selItem]}
-      >
-        <Text style={styles.itemText}>{item.label}</Text>
+      <View style={[styles.item, isSel && styles.selItem]}>
+        <Text
+          style={[
+            styles.itemText,
+            { color: isSel ? colors.selectedDropDownText : colors.text },
+          ]}
+        >
+          {item.label}
+        </Text>
       </View>
     );
   };
@@ -45,43 +56,23 @@ export default function Header() {
   const changeLang = async (val: string) => {
     await i18n.changeLanguage(val);
     dispatch(setLanguage(val));
-    
-    // Handle RTL for native platforms
-    if (Platform.OS !== "web") {
-      const needsRTL = val === "ur";
-      const currentIsRTL = I18nManager.isRTL;
-      
-      // Only reload if RTL direction needs to change
-      if (needsRTL !== currentIsRTL) {
-        if (needsRTL) {
-          I18nManager.allowRTL(true);
-          I18nManager.forceRTL(true);
-        } else {
-          I18nManager.allowRTL(false);
-          I18nManager.forceRTL(false);
-        }
-        
-        // Reload app to apply RTL changes
-        // This is necessary because I18nManager changes only take effect after app restart
-        try {
+
+    // Setup RTL based on language
+    const needsReload = setupRTL(val);
+
+    // Reload app to apply RTL changes if needed
+    // This is necessary because I18nManager changes only take effect after app restart
+    if (needsReload) {
+      try {
         setTimeout(async () => {
           await Updates.reloadAsync();
         }, 50);
-        } catch (error) {
-          // If reload fails (e.g., in Expo Go), the change will apply on next app restart
-          console.warn("Could not reload app. RTL change will apply on next restart:", error);
-        }
-      }
-    } else {
-      // Handle RTL for web
-      if (typeof document !== "undefined") {
-        if (val === "ur") {
-          document.documentElement.dir = "rtl";
-          document.documentElement.setAttribute("lang", "ur");
-        } else {
-          document.documentElement.dir = "ltr";
-          document.documentElement.setAttribute("lang", val);
-        }
+      } catch (error) {
+        // If reload fails (e.g., in Expo Go), the change will apply on next app restart
+        console.warn(
+          "Could not reload app. RTL change will apply on next restart:",
+          error
+        );
       }
     }
   };

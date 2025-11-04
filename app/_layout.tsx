@@ -1,4 +1,5 @@
 import { ThemedStatusBar } from "@/src/components/themedStatusBar";
+import { setupRTL } from "@/src/constant/functions";
 import { initI18n } from "@/src/i18n/index";
 import { persistor, store } from "@/src/state/store";
 import { Font } from "@/src/theme/fonts";
@@ -7,9 +8,10 @@ import { Slot } from "expo-router";
 import i18n from "i18next";
 import { useEffect, useState } from "react";
 import { I18nextProvider } from "react-i18next";
-import { ActivityIndicator, View, I18nManager, Platform } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import "../global.css";
 
 export default function RootLayout() {
   const [ready, setReady] = useState(false);
@@ -53,34 +55,21 @@ export default function RootLayout() {
         }
         onBeforeLift={() => {
           // Sync i18n with Redux persisted language after rehydration
+          // Ensure i18n is initialized before calling changeLanguage
+          if (!i18n || !i18n.isInitialized) {
+            return;
+          }
+          
           const state = store.getState();
-          if (state?.general?.language && i18n.language !== state.general.language) {
-            i18n.changeLanguage(state.general.language);
-            
-            // Handle RTL for native platforms
-            if (Platform.OS !== "web") {
-              if (state.general.language === "ur") {
-                if (!I18nManager.isRTL) {
-                  I18nManager.allowRTL(true);
-                  I18nManager.forceRTL(true);
-                }
-              } else {
-                if (I18nManager.isRTL) {
-                  I18nManager.allowRTL(false);
-                  I18nManager.forceRTL(false);
-                }
-              }
-            } else {
-              // Handle RTL for web
-              if (typeof document !== "undefined") {
-                if (state.general.language === "ur") {
-                  document.documentElement.dir = "rtl";
-                  document.documentElement.setAttribute("lang", "ur");
-                } else {
-                  document.documentElement.dir = "ltr";
-                  document.documentElement.setAttribute("lang", state.general.language);
-                }
-              }
+          if (
+            state?.general?.language &&
+            i18n.language !== state.general.language
+          ) {
+            try {
+              i18n.changeLanguage(state.general.language);
+              setupRTL(state.general.language);
+            } catch (error) {
+              console.warn("Error changing language:", error);
             }
           }
         }}

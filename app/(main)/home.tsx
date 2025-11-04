@@ -1,5 +1,5 @@
 import Header from "@/src/components/header/header";
-import { getLangLabel } from "@/src/constant/functions";
+import { getLangLabel, isRTL } from "@/src/constant/functions";
 import { IMAGES } from "@/src/constant/images";
 import { useTheme } from "@/src/hooks/hooks";
 import { Theme } from "@/src/theme/colors";
@@ -13,15 +13,19 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import "../global.css";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function Index() {
-  const { colors, theme ,themeType} = useTheme();
+export default function Home() {
+  const { colors, theme, themeType } = useTheme();
   const { t, i18n } = useTranslation();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const rotateYAnim = useRef(new Animated.Value(0)).current;
+  const router = useRouter();
+  const isRTLMode = isRTL(i18n.language);
 
   useEffect(() => {
     Animated.loop(
@@ -42,16 +46,20 @@ export default function Index() {
   return (
     <SafeAreaView style={styles.container}>
       <Header />
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <Ionicons
+          name={isRTLMode ? "arrow-forward" : "arrow-back"}
+          size={24}
+          color={colors.text}
+        />
+      </TouchableOpacity>
       <Animated.Image
         source={IMAGES.x2Logo}
         resizeMode="contain"
         style={[
           styles.logo,
           {
-            transform: [
-              { perspective: 1000 }, // 👈 adds 3D depth
-              { rotateY },
-            ],
+            transform: [{ perspective: 1000 }, { rotateY }],
           },
         ]}
       />
@@ -92,5 +100,11 @@ export const createStyles = (theme: Theme) =>
       color: theme.text,
       fontSize: fontSize.size22,
       fontFamily: fonts.fontBold,
+    },
+    backButton: {
+      position: "absolute",
+      top: 60,
+      zIndex: 10,
+      padding: 8,
     },
   });

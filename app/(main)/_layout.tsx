@@ -1,0 +1,30 @@
+import { Stack } from "expo-router";
+import { useTheme } from "@/src/hooks/hooks";
+import { useMemo } from "react";
+import { Platform, StyleSheet } from "react-native";
+
+export default function MainLayout() {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: styles.contentStyle,
+        animation: Platform.OS === "ios" ? "default" : "fade_from_bottom",
+      }}
+    >
+      <Stack.Screen name="index" />
+      <Stack.Screen name="home" />
+    </Stack>
+  );
+}
+
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    contentStyle: {
+      backgroundColor: theme.background,
+    },
+  });
+
