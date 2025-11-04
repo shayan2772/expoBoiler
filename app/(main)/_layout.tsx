@@ -3,6 +3,14 @@ import { useTheme } from "@/src/hooks/hooks";
 import { useMemo } from "react";
 import { Platform, StyleSheet } from "react-native";
 
+
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    contentStyle: {
+      backgroundColor: theme.background,
+    },
+  });
+
 export default function MainLayout() {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -21,10 +29,5 @@ export default function MainLayout() {
   );
 }
 
-const createStyles = (theme: any) =>
-  StyleSheet.create({
-    contentStyle: {
-      backgroundColor: theme.background,
-    },
-  });
+
 

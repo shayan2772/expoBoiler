@@ -19,6 +19,38 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
+
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    logo: {
+      width: 180,
+      height: 180,
+      position: "absolute",
+      top: 10,
+    },
+    main: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 10,
+    },
+    title: {
+      color: theme.text,
+      fontSize: fontSize.size22,
+      fontFamily: fonts.fontBold,
+    },
+    backButton: {
+      position: "absolute",
+      top: 60,
+      zIndex: 10,
+      padding: 8,
+    },
+  });
+
 export default function Home() {
   const { colors, theme, themeType } = useTheme();
   const { t, i18n } = useTranslation();
@@ -78,33 +110,4 @@ export default function Home() {
   );
 }
 
-export const createStyles = (theme: Theme) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.background,
-    },
-    logo: {
-      width: 180,
-      height: 180,
-      position: "absolute",
-      top: 10,
-    },
-    main: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 10,
-    },
-    title: {
-      color: theme.text,
-      fontSize: fontSize.size22,
-      fontFamily: fonts.fontBold,
-    },
-    backButton: {
-      position: "absolute",
-      top: 60,
-      zIndex: 10,
-      padding: 8,
-    },
-  });
+

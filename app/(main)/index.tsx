@@ -14,46 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
-
-export default function Dashboard() {
-  const { colors } = useTheme();
-  const { t } = useTranslation();
-  const styles = useMemo(() => createStyles(colors), [colors]);
-  const router = useRouter();
-
-  const handleGoToHome = () => {
-    router.push("/home");
-  };
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <Header />
-      <View style={styles.content}>
-        <View style={styles.welcomeSection}>
-          <Text style={styles.welcomeTitle}>{t("dashboard")}</Text>
-          <Text style={styles.welcomeSubtitle}>
-            {t("welcome")}
-          </Text>
-        </View>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleGoToHome}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="home" size={20} color={colors.selectedDropDownText} />
-            <Text style={styles.buttonText}>
-              {t("goToHome")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </SafeAreaView>
-  );
-}
-
-export const createStyles = (theme: Theme) =>
+const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -102,3 +63,43 @@ export const createStyles = (theme: Theme) =>
       fontFamily: fonts.fontSemibold,
     },
   });
+
+
+export default function Dashboard() {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const router = useRouter();
+
+  const handleGoToHome = () => {
+    router.push("/home");
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Header />
+      <View style={styles.content}>
+        <View style={styles.welcomeSection}>
+          <Text style={styles.welcomeTitle}>{t("dashboard")}</Text>
+          <Text style={styles.welcomeSubtitle}>
+            {t("welcome")}
+          </Text>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleGoToHome}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="home" size={20} color={colors.selectedDropDownText} />
+            <Text style={styles.buttonText}>
+              {t("goToHome")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
+
