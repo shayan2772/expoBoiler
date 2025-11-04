@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { MAIN_ROUTES } from "@/src/constant/routes";
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
@@ -72,7 +73,7 @@ export default function Dashboard() {
   const router = useRouter();
 
   const handleGoToHome = () => {
-    router.push("/home");
+    router.push(`/${MAIN_ROUTES.HOME}`);
   };
 
   return (

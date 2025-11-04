@@ -8,7 +8,6 @@ import { Slot } from "expo-router";
 import i18n from "i18next";
 import { useEffect, useState } from "react";
 import { I18nextProvider } from "react-i18next";
-import { ActivityIndicator, View } from "react-native";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import "../global.css";
@@ -31,28 +30,14 @@ export default function RootLayout() {
   }, []);
 
   if (!ready || !fontsLoaded) {
-    return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color="#000" />
-      </View>
-    );
+    return null;
   }
 
   return (
     <Provider store={store}>
       <PersistGate
         persistor={persistor}
-        loading={
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <ActivityIndicator size="large" />
-          </View>
-        }
+        loading={null}
         onBeforeLift={() => {
           // Sync i18n with Redux persisted language after rehydration
           // Ensure i18n is initialized before calling changeLanguage
